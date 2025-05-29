@@ -4,6 +4,7 @@ customElements.define('note-status', class NoteStatus extends HTMLElement {
     this._shadowRoot = this.attachShadow({ mode: 'open' });
     this._style = document.createElement('style');
     this._callback = () => { };
+    this._currentStatus = 'archive';
   }
 
   connectedCallback() {
@@ -56,8 +57,8 @@ customElements.define('note-status', class NoteStatus extends HTMLElement {
     ${this._style.outerHTML}
     <form>
       <select id="kategori" name="kategori">
-        <option value="archive" selected>Arsip</option>
-        <option value="unarchive">Tidak Arsip</option>
+        <option value="archive" ${this._currentStatus === 'archive' ? 'selected' : ''}>Arsip</option>
+        <option value="unarchive" ${this._currentStatus === 'unarchive' ? 'selected' : ''}>Tidak Arsip</option>
       </select>
     </form>
   `;
@@ -69,8 +70,10 @@ customElements.define('note-status', class NoteStatus extends HTMLElement {
 
   }
 
-  onStatusSubmit(callback) {
+  set(currentStatus, callback) {
     this._callback = callback;
+    this._currentStatus = currentStatus;
+    this.render();
   }
 
 });

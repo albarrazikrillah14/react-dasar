@@ -52,13 +52,13 @@ customElements.define('note-list', class NoteList extends HTMLElement {
     this._shadowRoot.innerHTML = '';
     this._shadowRoot.appendChild(this._style);
 
-    if (this._list.length === 0) {
+    if (typeof this._list === 'string' || this._list.length === 0) {
       this._shadowRoot.innerHTML = '';
       this._shadowRoot.appendChild(this._style);
 
       const empty = document.createElement('div');
       empty.classList.add('empty-state');
-      empty.innerText = 'Tidak ada catatan ditemukan.';
+      empty.innerText = this._list;
 
       this._shadowRoot.appendChild(empty);
       return;

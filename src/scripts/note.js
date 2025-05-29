@@ -1,4 +1,3 @@
-
 customElements.define('note-item', class NoteItem extends HTMLElement {
   constructor() {
     super();
@@ -150,12 +149,43 @@ customElements.define('note-item', class NoteItem extends HTMLElement {
         width: 100%;
       }
     }
-  `;
-  }
+    
+    .note__body--collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
+    .note__body--expanded {
+      display: block;
+    }
+    
+    .toggle-body {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 0.5rem;
+      transition: color 0.2s ease;
+      text-align: left;
+    }
+
+    .toggle-body:hover {
+      color: #1d4ed8;
+    }
+    `;
+  }
 
   render() {
     this.updateStyle();
+
+    // Perbaikan: Cek panjang teks berdasarkan baris atau karakter
+    const lines = this._body.split('\n');
+    const isLongText = lines.length > 3 || this._body.length > 300;
 
     this._shadowRoot.innerHTML = `
     ${this._style.outerHTML}
@@ -164,7 +194,8 @@ customElements.define('note-item', class NoteItem extends HTMLElement {
         <h1 class="note__header_title">${this._title}</h1>
         <p class="note__header_date">${formatTanggal(this._createdAt)}</p>
       </div>        
-      <p class="note__body">${this._body}</p>
+      <p class="note__body ${isLongText ? 'note__body--collapsed' : ''}">${this._body}</p>
+      ${isLongText ? '<button class="toggle-body">Show more</button>' : ''}
       <div class="note__actions">
         <button class="delete">Delete</button>
         <button class="archive">${this._archived ? 'Unarchive' : 'Archive'}</button>
@@ -172,17 +203,40 @@ customElements.define('note-item', class NoteItem extends HTMLElement {
     </div>`;
 
     const deleteButton = this._shadowRoot.querySelector('.delete');
-
-    deleteButton.addEventListener('click', () => {
-      this._onDelete(this._id);
-    })
+    if (deleteButton) {
+      deleteButton.addEventListener('click', () => {
+        if (this._onDelete) this._onDelete(this._id);
+      });
+    }
 
     const updateButton = this._shadowRoot.querySelector('.archive');
-    updateButton.addEventListener('click', () => {
-      this._onUpdate(this._id, this._archived);
-    })
-  }
+    if (updateButton) {
+      updateButton.addEventListener('click', () => {
+        if (this._onUpdate) this._onUpdate(this._id, this._archived);
+      });
+    }
 
+    if (isLongText) {
+      const bodyElement = this._shadowRoot.querySelector('.note__body');
+      const toggleButton = this._shadowRoot.querySelector('.toggle-body');
+
+      if (toggleButton && bodyElement) {
+        toggleButton.addEventListener('click', () => {
+          const isCollapsed = bodyElement.classList.contains('note__body--collapsed');
+          
+          if (isCollapsed) {
+            bodyElement.classList.remove('note__body--collapsed');
+            bodyElement.classList.add('note__body--expanded');
+            toggleButton.textContent = 'Show less';
+          } else {
+            bodyElement.classList.remove('note__body--expanded');
+            bodyElement.classList.add('note__body--collapsed');
+            toggleButton.textContent = 'Show more';
+          }
+        });
+      }
+    }
+  }
 
   setItem({ id, title, body, createdAt, archived, onDelete, onUpdate }) {
     this._id = id;
