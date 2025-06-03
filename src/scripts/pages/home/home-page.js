@@ -8,6 +8,7 @@ export default class HomePage {
 
   async render() {
     this.setPage(0);
+    this.setIsEnd(false);
 
     return `
     <header class="main__header">
@@ -43,6 +44,10 @@ export default class HomePage {
       const nearBottom =
         window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
 
+      if (this.getIsEnd()) {
+        return
+      }
+
       if (nearBottom && !this.#isLoading) {
         this.#isLoading = true;
         await this.#presenter.showAllStories();
@@ -53,27 +58,24 @@ export default class HomePage {
   }
 
   async showAllStories(stories) {
-    const listStory = Array.from(document.querySelectorAll('.story-card'));
+    const container = document.querySelector('.story-list');
+    if (!container) {
+      document.querySelector('.stories').innerHTML = `<ul class="story-list"></ul>`;
+    }
+
+    const existingIds = new Set(Array.from(document.querySelectorAll('.story__card'))
+      .map(el => el.dataset.id));
 
     const html = stories.reduce((prev, current) => {
-      const alreadyExists = listStory.some(item => item.dataset.id === current.id);
-
-      if (!alreadyExists) {
+      if (!existingIds.has(current.id)) {
+        existingIds.add(current.id);
         return prev + generateTemplateStory(current);
       }
       return prev;
     }, '');
 
-    const container = document.querySelector('.story-list');
-    if (container) {
-      container.insertAdjacentHTML('beforeend', html);
-    } else {
-      document.querySelector('.stories').innerHTML = `
-      <ul class="story-list">${html}</ul>
-    `;
-    }
+    document.querySelector('.story-list').insertAdjacentHTML('beforeend', html);
   }
-
 
 
   async handleError(error) {
@@ -100,5 +102,13 @@ export default class HomePage {
 
   getPage() {
     return localStorage.getItem('page');
+  }
+
+  setIsEnd(isEnd) {
+    localStorage.setItem('is_end', `${isEnd}`);
+  }
+
+  getIsEnd() {
+    return localStorage.getItem('is_end') === "true";
   }
 }

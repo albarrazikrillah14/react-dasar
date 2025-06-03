@@ -15,6 +15,8 @@ export default class HomePresenter {
       const stories = await this.#model.getAllStories({page: page + 1 });
       if (stories.length === 10) {
         this.#view.setPage(page + 1);
+      } else {
+        this.#view.setIsEnd(true);
       }
 
       await this.#view.showAllStories(stories);
