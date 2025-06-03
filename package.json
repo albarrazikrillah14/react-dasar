@@ -24,6 +24,9 @@
     "webpack-merge": "^6.0.1"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
+    "tiny-slider": "^2.9.4"
   },
   "module": "module"
 }

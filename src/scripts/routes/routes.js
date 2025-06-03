@@ -1,15 +1,16 @@
-import LoginPage from "../page/auth/login/login-page.js";
-import RegisterPage from "../page/auth/register/register-page.js";
-import DetailPage from "../page/detail/detail-page.js";
-import HomePage from "../page/home/home-page.js";
-import SplashPage from "../page/splash/splash-page.js";
+import AddPage from "../pages/add/add-page.js";
+import LoginPage from "../pages/auth/login/login-page.js";
+import RegisterPage from "../pages/auth/register/register-page.js";
+import DetailPage from "../pages/detail/detail-page.js";
+import HomePage from "../pages/home/home-page.js";
 
 const routes = {
-  '/': () => new SplashPage(),
+  '/': () => new LoginPage(),
   '/home': () => new HomePage(),
   '/stories/:id': () => new DetailPage(),
   '/login': () => new LoginPage(),
   '/register': () => new RegisterPage(),
+  '/add': () => new AddPage(),
 };
 
 export default routes;

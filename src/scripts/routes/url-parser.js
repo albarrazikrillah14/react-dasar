@@ -45,17 +45,3 @@ export function parseActivePathname() {
   const pathname = getActivePathname();
   return extractPathnameSegments(pathname);
 }
-
-export function getQueryParamsFromHashObject() {
-  const hash = window.location.hash; 
-  const [, queryString] = hash.split('?');
-
-  const params = new URLSearchParams(queryString || '');
-  const result = {};
-
-  for (const [key, value] of params.entries()) {
-    result[key] = value;
-  }
-
-  return result;
-}

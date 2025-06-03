@@ -1,5 +1,6 @@
-import { getActiveRoute } from './routes/url-parser.js';
-import routes from './routes/routes.js';
+import { getActiveRoute } from '../routes/url-parser.js';
+import routes from '../routes/routes.js';
+import { transitionHelper } from '../utils/index.js';
 
 export default class App {
   #content;
@@ -25,15 +26,14 @@ export default class App {
     // Get page instance
     const page = route();
 
-    if (!document.startViewTransition) {
-      this.#content.innerHTML = await page.render();
-      await page.afterRender();
-      return;
-    }
-
-    document.startViewTransition(async () => {
-      this.#content.innerHTML = await page.render();
-      await page.afterRender();
+    const transition = transitionHelper({
+      updateDOM: async () => {
+        this.#content.innerHTML = await page.render();
+        page.afterRender();
+      },
     });
+
+    transition.ready.catch(console.error);
+  
   }
 }

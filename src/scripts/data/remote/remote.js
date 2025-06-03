@@ -102,10 +102,9 @@ const Remote = {
       throw new Error(error.message);
     }
   },
-  async getAllStories(page = 0, size = 10, location = 1) {
+  async getAllStories({page = 0, size = 10, location = 1}) {
     const credentials = localStorage.getItem("credentials");
     const token = JSON.parse(credentials)?.token || '';
-
 
     try {
       const headers = {};
@@ -119,7 +118,7 @@ const Remote = {
       if (location) query.push(`location=${location}`);
 
       let url = `${BASE_URL}/stories`;
-      if (!query.length) {
+      if (query.length) {
         url += `?${query.join("&")}`
       }
 
@@ -158,7 +157,7 @@ const Remote = {
       }
 
       let url = `${BASE_URL}/stories/${id}`;
-  
+
       const result = await fetch(
         url, {
         headers: headers,
@@ -181,7 +180,23 @@ const Remote = {
     } catch (error) {
       throw new Error(error.message);
     }
+  },
+ async getLocationName(lat, lon) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+    const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+    const data = await response.json();
+
+    const address = data.address;
+    const locationName = address.city || address.town || address.village ||
+      address.county || address.state || 'Lokasi tidak diketahui';
+
+    return locationName;
+  } catch {
+    return '';
   }
+}
+
 };
 
 export default Remote;

@@ -11,10 +11,22 @@ export default class DetailPresenter {
 
   async showDetail() {
     try {
+      await this.#view.showLoading();
+
       const detail = await this.#model.getDetailStoryById(this.#id);
+
       await this.#view.showDetail(detail);
+      
+      const { lat, lon } = detail;
+      if (lat && lon) {
+        await this.#view.showMap(detail);
+      }
+      
     } catch (error) {
-      console.log(error);
-    } finally {}
+      await this.#view.handleError(error.message);
+    } finally {
+      await this.#view.hideLoading();
+    }
   }
+
 }

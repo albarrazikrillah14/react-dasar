@@ -6,29 +6,26 @@ export default class LoginPage {
 
   render() {
     return `
-      <form>
+      <form class="form__login">
         <h1 class="title">Selamat Datang</h1>
-        <div class="form-group">
-          <label for="email" class="form-group__label">Email</label>
-          <input type="email" id="email" name="email" required aria-describedby="additional_email_information"
-            placeholder="masukkan email anda..">
-          <p id="additional_email_information" class="error-message"></p>
+
+        <div class="form__group">
+          <label for="email" class="form__group__label">Email</label>
+          <input type="email" id="email" name="email" required placeholder="masukkan email anda..">
+          <p id="additional_email_information" class="error__message"></p>
         </div>
 
-        <div class="form-group">
-          <label for="password" class="form-group__label">Password</label>
+        <div class="form__group">
+          <label for="password" class="form__group__label">Password</label>
           <input type="password" id="password" name="password" required minlength="8"
-            aria-describedby="additional_password_information" placeholder="masukkan password anda...">
-          <p id="additional_password_information" class="error-message"></p>
+            placeholder="masukkan password anda...">
+          <p id="additional_password_information" class="error__message"></p>
         </div>
 
-        <div
-          <div id="loading-container"></div>
-          <div id="error" class="error-message"></div>
-          <button type="submit" class="btn-primary">Masuk</button>
-        </div>
-
-        <p class="register-link">
+        <div id="loading__container"></div>
+        <div id="error" class="error__message"></div>
+        <button type="submit" class="btn__primary" id="btn-login">Masuk</button>
+        <p class="cta">
           Belum punya akun?
           <a href="#/register">Daftar</a>
         </p>
@@ -37,6 +34,9 @@ export default class LoginPage {
   }
 
   async afterRender() {
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+
     // EMAIL VALIDATION
     email.addEventListener('invalid', this.handleEmail);
     email.addEventListener('change', this.handleEmail);
@@ -70,53 +70,64 @@ export default class LoginPage {
 
   async showLoading() {
     document.getElementById('error').innerHTML = '';
-    document.querySelector('button[type="submit"]').hidden = true;
-    document.getElementById('loading-container').innerHTML = `
+    document.getElementById('btn-login').disabled = true;
+    document.getElementById('loading__container').innerHTML = `
       <div class="loader"></div>
     `;
   }
 
   async hideLoading() {
-    document.querySelector('button[type="submit"]').hidden = false;
-    document.getElementById('loading-container').innerHTML = '';
+    document.getElementById('btn-login').disabled = false;
+    document.getElementById('loading__container').innerHTML = '';
   }
 
   async handleError(error) {
     document.getElementById('error').innerHTML = `
-      <p class="error">${error}</p>
+      <p class="error__message">${error}</p>
     `;
   }
 
   async handleEmail(e) {
-    e.preventDefault();
-
     const emailError = document.getElementById('additional_email_information');
 
     if (e.target.validity.valid) {
       emailError.textContent = '';
+      e.target.setCustomValidity('');
     }
 
     if (e.target.validity.valueMissing) {
       emailError.textContent = 'Email tidak boleh kosong.';
+      e.target.setCustomValidity('Email tidak boleh kosong');
+
     } else if (e.target.validity.typeMismatch) {
       emailError.textContent = 'Format email tidak valid.';
+      e.target.setCustomValidity('Format email tidak valid.');
+
     } else {
       emailError.textContent = '';
+      e.target.setCustomValidity('');
     }
   }
 
   async handlePassword(e) {
-    e.preventDefault();
     const passwordError = document.getElementById('additional_password_information');
 
     if (e.target.validity.valid) {
       passwordError.textContent = '';
+      e.target.setCustomValidity('');
+
     }
 
     if (e.target.validity.valueMissing) {
       passwordError.textContent = 'Password tidak boleh kosong.';
+      e.target.setCustomValidity('Password tidak boleh kosong');
+
     } else if (e.target.validity.tooShort) {
       passwordError.textContent = 'Password minimal 8 karakter.';
+      e.target.setCustomValidity('Password minimal 8 karakter.');
+    } else {
+      passwordError.textContent = '';
+      e.target.setCustomValidity('');
     }
   }
 }

@@ -1,0 +1,99 @@
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(30px);
+  }
+}
+
+@media screen and (width > 600px) {
+  ::view-transition-old(root) {
+    animation:
+      fade-out 90ms cubic-bezier(0.4, 0, 1, 1) both,
+      slide-to-left 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation:
+      fade-in 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both,
+      slide-from-right 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .main__header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .nav__action {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .story-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .story-card {
+    padding: 1rem;
+  }
+}
+
+@media screen and (width > 800px) {
+  .main__header {
+    padding: 2rem 3rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .nav__action .btn__primary,
+  .nav__action .btn__secondary {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .story-card {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (width > 1000px) {
+  .stories {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .story-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .main__header {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
