@@ -11,6 +11,7 @@ export default class HomePage {
     this.setIsEnd(false);
 
     return `
+    <a href="#main-content" class="skip-to-content">Skip to Content</a>
     <header class="main__header">
       <h1 class="title">Beranda</h1>
       <nav class="nav__action">
@@ -18,8 +19,10 @@ export default class HomePage {
         <a id="logout-btn" class="btn__secondary nav-a">Keluar</a>
       </nav>
     </header>
-    <div id="loading__container"></div>
-    <div class="stories"></div>
+    <main id="main-content" tabindex="-1">
+      <div id="loading__container"></div>
+      <div class="stories"></div>
+    </main>
   `;
   }
 
@@ -30,6 +33,14 @@ export default class HomePage {
     })
 
     await this.#presenter.showAllStories();
+
+    // Skip to content functionality
+    document.querySelector('.skip-to-content').addEventListener('click', (e) => {
+      e.preventDefault();
+      const mainContent = document.getElementById('main-content');
+      mainContent.focus();
+      mainContent.scrollIntoView({ behavior: 'smooth' });
+    });
 
     document.getElementById('logout-btn').addEventListener('click', (e) => {
       localStorage.removeItem('credentials');
@@ -54,7 +65,6 @@ export default class HomePage {
         this.#isLoading = false;
       }
     });
-
   }
 
   async showAllStories(stories) {
@@ -77,14 +87,12 @@ export default class HomePage {
     document.querySelector('.story-list').insertAdjacentHTML('beforeend', html);
   }
 
-
   async handleError(error) {
     const container = document.querySelector('.stories');
     if (container) {
       container.innerHTML = `<p class="error__message">${error}</p>`;
     }
   }
-
 
   async showLoading() {
     document.getElementById('loading__container').innerHTML = `
