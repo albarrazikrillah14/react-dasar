@@ -12,7 +12,7 @@ export default function generateTemplateStory({
       <img src="${photoUrl}" alt="${name}" class="story__card__image" />
       <div class="story__card__content">
         <h2 class="story__card__title">${name}</h2>
-        <p class="story__card__description">${description}</p>
+        <p class="story__card__description">  ${description.split(' ').slice(0, 10).join(' ')}...</p>
         <time class="story__card__date">${showFormattedDate(createdAt)}</time>
       </div>
     </div>

@@ -7,8 +7,10 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet-defaulticon-compatibility';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const content = document.querySelector('#content');
-  const app = new App({ content });
+  const content = document.querySelector('#main-content');
+  const skipLinkButton = document.getElementById('skip-link');
+
+  const app = new App({ content, skipLinkButton });
   await app.renderPage();
 
   window.addEventListener('hashchange', async () => {

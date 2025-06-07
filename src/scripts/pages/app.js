@@ -1,12 +1,21 @@
 import { getActiveRoute } from '../routes/url-parser.js';
 import routes from '../routes/routes.js';
-import { transitionHelper } from '../utils/index.js';
+import { setupSkipToContent, transitionHelper } from '../utils/index.js';
 
 export default class App {
   #content;
+  #skipLinkButton;
 
-  constructor({ content }) {
+
+  constructor({ content, skipLinkButton }) {
     this.#content = content;
+    this.#skipLinkButton = skipLinkButton;
+    this.#init();
+  }
+
+
+  #init() {
+    setupSkipToContent(this.#skipLinkButton, this.#content);
   }
 
   async renderPage() {
@@ -34,6 +43,6 @@ export default class App {
     });
 
     transition.ready.catch(console.error);
-  
+
   }
 }

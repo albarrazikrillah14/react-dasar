@@ -8,9 +8,12 @@ export default class AddPage {
   #currentMarker;
   #videoElement;
   #photoCanvasElement;
-  #isSubmitting = false; // Flag untuk prevent double submit
+  #isSubmitting = false;
+  #formSubmitHandler = null; 
 
   async render() {
+    this.#isSubmitting = false; 
+
     return `
       <section class="header">
         <h1 class="title">Tambah Ceritamu</h1>
@@ -76,73 +79,74 @@ export default class AddPage {
     description.addEventListener('change', this.handleDescription);
     description.addEventListener('invalid', this.handleDescription);
 
-    // Event listener untuk perubahan input lat/lon
     lat.addEventListener('input', this.handleLatLonChange.bind(this));
     lon.addEventListener('input', this.handleLatLonChange.bind(this));
 
-    // Event listener untuk tombol lokasi saat ini
+  
     getCurrentLocationBtn.addEventListener('click', this.getCurrentLocation.bind(this));
 
-    // Event listeners untuk kamera
     startCameraBtn.addEventListener('click', this.startCamera.bind(this));
     capturePhotoBtn.addEventListener('click', this.capturePhoto.bind(this));
     stopCameraBtn.addEventListener('click', this.stopCamera.bind(this));
 
-    // Event listener untuk file input
     imageInput.addEventListener('change', this.handleFileSelect.bind(this));
 
-    // Inisialisasi peta terlebih dahulu
     await this.showMap();
 
-    // Kemudian dapatkan lokasi saat ini
     await this.getCurrentLocation();
 
     this.#presenter = new AddPresenter({
       model: Remote,
       view: this,
     });
-
-    // PERBAIKAN: Pastikan hanya satu event listener yang terpasang
-    const form = document.querySelector('.form__add');
     
-    // Hapus event listener yang mungkin sudah ada
-    form.removeEventListener('submit', this.handleFormSubmit);
+    // Remove existing listener if any and add new one
+    const form = document.querySelector('form');
+    if (this.#formSubmitHandler) {
+      form.removeEventListener('submit', this.#formSubmitHandler);
+    }
     
-    // Tambahkan event listener baru
-    form.addEventListener('submit', this.handleFormSubmit.bind(this));
+    this.#formSubmitHandler = this.handleFormSubmit.bind(this);
+    form.addEventListener('submit', this.#formSubmitHandler, { once: false });
   }
 
-  // PERBAIKAN: Pisahkan handler submit ke method terpisah
   async handleFormSubmit(e) {
+    // Prevent default and stop propagation immediately
     e.preventDefault();
-    e.stopPropagation(); // Mencegah event bubbling
-
-    // Prevent double submit
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    
+    // Check if already submitting
     if (this.#isSubmitting) {
-      console.log('Form is already being submitted, ignoring...');
+      console.log('Already submitting, ignoring duplicate submission');
       return;
     }
 
-    this.#isSubmitting = true;
+    const btn = document.getElementById('btn-submit');
 
     try {
-      const form = e.target;
+      // Set submitting flag immediately
+      this.#isSubmitting = true;
+      
+      // Disable button immediately
+      btn.disabled = true;
+      btn.textContent = 'Mengirim...'; // Visual feedback
+
+      const form = document.querySelector('form');
       const formData = new FormData(form);
       const imageFile = formData.get('image');
-      const description = document.getElementById('description');
-      const lat = document.getElementById('lat');
-      const lon = document.getElementById('lon');
+      const description = formData.get('description');
+      const lat = formData.get('latitude');
+      const lon = formData.get('longitude');
 
-      const descriptionValue = description.value;
-      const latValue = parseFloat(lat.value);
-      const lonValue = parseFloat(lon.value);
+      const latValue = parseFloat(lat);
+      const lonValue = parseFloat(lon);
 
-      // Validasi tambahan
       if (!imageFile || imageFile.size === 0) {
         throw new Error('Gambar harus dipilih');
       }
 
-      if (!descriptionValue || descriptionValue.length < 8) {
+      if (!description || description.length < 8) {
         throw new Error('Deskripsi minimal 8 karakter');
       }
 
@@ -151,24 +155,24 @@ export default class AddPage {
       }
 
       await this.#presenter.postStory({
-        description: descriptionValue,
+        description: description,
         photo: imageFile,
         lat: latValue,
         lon: lonValue,
       });
 
     } catch (error) {
-      console.error('Error submitting form:', error);
-      await this.handleError(error.message || 'Terjadi kesalahan saat mengirim data');
+      this.handleError(error);
     } finally {
-      // Reset flag setelah selesai
+      // Reset states
       this.#isSubmitting = false;
+      btn.disabled = false;
+      btn.textContent = 'Tambah'; // Reset button text
     }
   }
 
   async startCamera() {
     try {
-      // Clear any existing image displays and reset file input
       this.clearImageDisplays();
       this.clearFileInput();
 
@@ -379,7 +383,6 @@ export default class AddPage {
     const lat = parseFloat(latInput.value);
     const lon = parseFloat(lonInput.value);
 
-    // Validasi input
     if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
       this.updateMapLocation(lat, lon);
     }
@@ -388,24 +391,21 @@ export default class AddPage {
   updateMapLocation(lat, lon) {
     if (!this.#map || !this.#mapLayer) return;
 
-    // Hapus marker yang ada
     if (this.#currentMarker) {
       this.#mapLayer.removeLayer(this.#currentMarker);
     }
 
-    // Tambah marker baru
+    //  marker baru
     this.#currentMarker = L.marker([lat, lon], {
       draggable: true
     }).addTo(this.#mapLayer);
 
-    // Event listener untuk drag marker
     this.#currentMarker.on('dragend', (e) => {
       const position = e.target.getLatLng();
       document.getElementById('lat').value = position.lat.toFixed(6);
       document.getElementById('lon').value = position.lng.toFixed(6);
     });
 
-    // Pindahkan view peta ke lokasi baru
     this.#map.setView([lat, lon], this.#map.getZoom());
   }
 
@@ -501,12 +501,10 @@ export default class AddPage {
   }
 
   async handleSuccess() {
-    this.#isSubmitting = false; // Reset flag
     window.location.href = '#/home';
   }
 
   async handleError(error) {
-    this.#isSubmitting = false; // Reset flag
     document.getElementById('error').innerHTML = `
       <p class="error__message">${error}</p>
     `;

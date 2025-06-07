@@ -1,4 +1,5 @@
 import Remote from "../../data/remote/remote.js";
+import { getActiveRoute } from "../../routes/url-parser.js";
 import generateTemplateStory from "../../template/story-template.js";
 import HomePresenter from "./home-presenter.js";
 
@@ -11,7 +12,6 @@ export default class HomePage {
     this.setIsEnd(false);
 
     return `
-    <a href="#main-content" class="skip-to-content">Skip to Content</a>
     <header class="main__header">
       <h1 class="title">Beranda</h1>
       <nav class="nav__action">
@@ -19,10 +19,8 @@ export default class HomePage {
         <a id="logout-btn" class="btn__secondary nav-a">Keluar</a>
       </nav>
     </header>
-    <main id="main-content" tabindex="-1">
-      <div id="loading__container"></div>
-      <div class="stories"></div>
-    </main>
+    <div id="loading__container"></div>
+    <div class="stories"></div>
   `;
   }
 
@@ -33,14 +31,6 @@ export default class HomePage {
     })
 
     await this.#presenter.showAllStories();
-
-    // Skip to content functionality
-    document.querySelector('.skip-to-content').addEventListener('click', (e) => {
-      e.preventDefault();
-      const mainContent = document.getElementById('main-content');
-      mainContent.focus();
-      mainContent.scrollIntoView({ behavior: 'smooth' });
-    });
 
     document.getElementById('logout-btn').addEventListener('click', (e) => {
       localStorage.removeItem('credentials');
@@ -58,8 +48,9 @@ export default class HomePage {
       if (this.getIsEnd()) {
         return
       }
-
+      
       if (nearBottom && !this.#isLoading) {
+        if (getActiveRoute() !== "/home") return;
         this.#isLoading = true;
         await this.#presenter.showAllStories();
         this.#isLoading = false;
