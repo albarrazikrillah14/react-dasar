@@ -1,6 +1,5 @@
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { BASE_URL } from './config';
  
@@ -16,26 +15,14 @@ registerRoute(
     cacheName: 'fontawesome',
   }),
 );
-registerRoute(
-  ({ url }) => {
-    return url.origin === 'https://ui-avatars.com';
-  },
-  new CacheFirst({
-    cacheName: 'avatars-api',
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-    ],
-  }),
-);
+
 registerRoute(
   ({ request, url }) => {
     const baseUrl = new URL(BASE_URL);
     return baseUrl.origin === url.origin && request.destination !== 'image';
   },
   new NetworkFirst({
-    cacheName: 'citycare-api',
+    cacheName: 'storyapp-api',
   }),
 );
 registerRoute(
@@ -44,17 +31,10 @@ registerRoute(
     return baseUrl.origin === url.origin && request.destination === 'image';
   },
   new StaleWhileRevalidate({
-    cacheName: 'citycare-api-images',
+    cacheName: 'storyapp-api-images',
   }),
 );
-registerRoute(
-  ({ url }) => {
-    return url.origin.includes('maptiler');
-  },
-  new CacheFirst({
-    cacheName: 'maptiler-api',
-  }),
-);
+
 
 self.addEventListener('push', (event) => {
   console.log('Service worker working!');

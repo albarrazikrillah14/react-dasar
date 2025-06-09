@@ -115,7 +115,6 @@ export default class App {
 
     // Get page instance
     const page = route();
-    console.log(page);
     const transition = transitionHelper({
       updateDOM: async () => {
         this.#content.innerHTML = await page.render();

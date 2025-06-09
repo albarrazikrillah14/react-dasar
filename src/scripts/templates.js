@@ -21,8 +21,8 @@ export default function generateTemplateStory({
 
 export function generateMainNavigationListTemplate() {
   return `
-    <li><a href="#/">Daftar Cerita</a></li>
-    <li><a href="#/favorites">Cerita Favorite</a></li>
+    <li><a href="#/" id="list-story">Daftar Cerita</a></li>
+    <li><a href="#/favorites" id="list-favorite">Cerita Favorite</a></li>
   `;
 }
 
