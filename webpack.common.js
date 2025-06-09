@@ -2,12 +2,13 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-
 module.exports = {
-  entry: './src/scripts/index.js',
+  entry: {
+    app: path.resolve(__dirname, 'src/scripts/index.js'),
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
   },
   module: {
     rules: [
@@ -29,6 +30,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html',
       filename: 'index.html',
+      excludeChunks: ['sw'],
+
     }),
     new CopyWebpackPlugin({
       patterns: [

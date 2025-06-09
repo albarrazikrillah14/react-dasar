@@ -1,3 +1,4 @@
+import Database from "../../data/local/database.js";
 import Remote from "../../data/remote/remote.js";
 import { parseActivePathname } from "../../routes/url-parser.js";
 import { showFormattedDate } from "../../utils/index.js";
@@ -10,22 +11,26 @@ export default class DetailPage {
 
   async render() {
     return `
-      <h1 class="title">Detail Story</h1>
-      <div id="loading__container"></div>
-      <div id="story-detail"></div>
-      <p class="cta"><a href="#/home">Kembali ke Home</a></p>
-    `;
+    <h1 class="title">Detail Story</h1>
+    <div id="save-action"></div>
+    <div id="loading__container"></div>
+    <div id="story-detail"></div>
+    <p class="cta"><a href="#/home">Kembali ke Home</a></p>
+  `;
   }
+
 
   async afterRender() {
     const { id } = parseActivePathname();
 
     this.#presenter = new DetailPresenter(id, {
       model: Remote,
+      localModel: Database,
       view: this,
     });
 
     await this.#presenter.showDetail();
+    await this.#presenter.renderSaveButton();
   }
 
   async showDetail({ id, name, description, photoUrl, createdAt, lat, lon }) {
@@ -48,6 +53,27 @@ export default class DetailPage {
 
     if (isMapExist) {
       await this.showMap({ id, name, description, photoUrl, createdAt, lat, lon });
+    }
+  }
+
+  async renderSaveButton(isSave) {
+    const action = document.getElementById('save-action');
+    if (isSave) {
+      action.innerHTML = ` <button id="unsave-button" class="btn save-button">UnSave</button>`;
+    } else {
+      action.innerHTML = `<button id="save-button" class="btn save-button">Save</button>`;
+    }
+
+    if (isSave) {
+      document.getElementById('unsave-button').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await this.#presenter.deleteStory();
+      });
+    } else {
+      document.getElementById('save-button').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await this.#presenter.saveStory();
+      });
     }
   }
 
@@ -160,5 +186,13 @@ export default class DetailPage {
 
   async hideLoading() {
     document.getElementById('loading__container').innerHTML = '';
+  }
+
+  async saveToBookmarkSuccessfully(message) {
+    alert(message);
+  }
+
+  async deleteFromBookmarkSuccessfully(message) {
+    alert(message);
   }
 }

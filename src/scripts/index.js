@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
+import { registerServiceWorker } from './utils';
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   const app = new App({
@@ -13,7 +15,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     drawerNavigation: document.getElementById('navigation-drawer'),
     skipLinkButton: document.getElementById('skip-link'),
   });
+
   await app.renderPage();
+
+  await registerServiceWorker();
 
   window.addEventListener('hashchange', async () => {
     await app.renderPage();

@@ -1,5 +1,5 @@
 import { BASE_URL } from "../../config.js";
-import { getAccessToken } from "../../utils/auth.js";
+import { getAccessToken, removeAccessToken } from "../../utils/auth.js";
 
 const Remote = {
   async register(name, email, password) {
@@ -93,7 +93,7 @@ const Remote = {
       }
 
       if (result.status === 401) {
-        localStorage.removeItem("credentials");
+        removeAccessToken();
       }
 
       throw new Error(response.message);
@@ -102,7 +102,7 @@ const Remote = {
       throw new Error(error.message);
     }
   },
-  async getAllStories({page = 0, size = 10, location = 1}) {
+  async getAllStories({ page = 0, size = 10, location = 1 }) {
     const token = getAccessToken()
 
     try {
@@ -135,7 +135,7 @@ const Remote = {
       }
 
       if (result.status === 401) {
-        localStorage.removeItem("credentials");
+        removeAccessToken();
       }
 
       throw new Error(response.message);
@@ -169,7 +169,7 @@ const Remote = {
       }
 
       if (result.status === 401) {
-        localStorage.removeItem("credentials");
+        removeAccessToken();
       }
 
       throw new Error(response.message);
@@ -178,21 +178,101 @@ const Remote = {
       throw new Error(error.message);
     }
   },
- async getLocationName(lat, lon) {
-  try {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
-    const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
-    const data = await response.json();
+  async subcribeNotif({ endpoint, keys: { p256dh, auth } }) {
+    const token = getAccessToken();
+    const data = JSON.stringify({
+      endpoint,
+      keys: { p256dh, auth },
+    });
 
-    const address = data.address;
-    const locationName = address.city || address.town || address.village ||
-      address.county || address.state || 'Lokasi tidak diketahui';
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-    return locationName;
-  } catch {
-    return '';
+
+      let url = `${BASE_URL}/notifications/subscribe`;
+
+      const result = await fetch(
+        url, {
+        method: "POST",
+        headers: headers,
+        body: data,
+      });
+
+
+      const response = await result.json();
+
+      if (result.status >= 200 && result.status < 300) {
+        const { data } = response;
+        return data;
+      }
+
+      if (result.status === 401) {
+        removeAccessToken();
+      }
+
+      throw new Error(response.message);
+
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  async unSubcribeNotif({ endpoint }) {
+    const token = getAccessToken();
+    const data = JSON.stringify({
+      endpoint
+    });
+
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      let url = `${BASE_URL}/notifications/subscribe`;
+
+      const result = await fetch(
+        url, {
+        method: "DELETE",
+        headers: headers,
+        body: data,
+      });
+
+
+      const response = await result.json();
+
+      if (result.status >= 200 && result.status < 300) {
+        const { message } = response;
+        return message;
+      }
+
+      if (result.status === 401) {
+        removeAccessToken();
+      }
+
+      throw new Error(response.message);
+
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  async getLocationName(lat, lon) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+      const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+      const data = await response.json();
+
+      const address = data.address;
+      const locationName = address.city || address.town || address.village ||
+        address.county || address.state || 'Lokasi tidak diketahui';
+
+      return locationName;
+    } catch {
+      return '';
+    }
   }
-}
 
 };
 

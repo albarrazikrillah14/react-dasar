@@ -24,16 +24,7 @@ export default class HomePage {
     })
 
     await this.#presenter.showAllStories();
-
-    // document.getElementById('logout-btn').addEventListener('click', (e) => {
-    //   localStorage.removeItem('credentials');
-    //   window.location.href = '/';
-    // });
-
-    // document.getElementById('add-story-btn').addEventListener('click', () => {
-    //   window.location.href = '#/add';
-    // });
-
+    
     window.addEventListener("scroll", async () => {
       const nearBottom =
         window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;

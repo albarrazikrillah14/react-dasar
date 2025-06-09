@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "start-dev": "webpack-dev-server --config webpack.dev.js"
+    "start-dev": "webpack-dev-server --config webpack.dev.js",
+    "serve": "http-server ./dist --port 3000"
   },
   "keywords": [],
   "author": "",
@@ -21,12 +22,21 @@
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.1",
-    "webpack-merge": "^6.0.1"
+    "webpack-merge": "^6.0.1",
+    "workbox-webpack-plugin": "^7.3.0"
   },
   "dependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "http-server": "^14.1.1",
+    "idb": "^8.0.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
-    "tiny-slider": "^2.9.4"
+    "mini-css-extract-plugin": "^2.9.2",
+    "tiny-slider": "^2.9.4",
+    "workbox-cacheable-response": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
+    "workbox-routing": "^7.3.0",
+    "workbox-strategies": "^7.3.0"
   },
   "module": "module"
 }

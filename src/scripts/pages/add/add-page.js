@@ -497,7 +497,7 @@ export default class AddPage {
   }
 
   async handleSuccess() {
-    window.location.href = '#/home';
+    window.location.href = '#/';
   }
 
   async handleError(error) {

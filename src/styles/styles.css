@@ -809,3 +809,8 @@ input {
 .camera__loading .loader {
   margin-bottom: 1rem;
 }
+
+.save-button {
+  display: block;
+  margin: 20px auto;
+}
