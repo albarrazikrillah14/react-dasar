@@ -1,6 +1,6 @@
 import Remote from "../../data/remote/remote.js";
 import { getActiveRoute } from "../../routes/url-parser.js";
-import generateTemplateStory from "../../template/story-template.js";
+import generateTemplateStory from "../../templates.js";
 import HomePresenter from "./home-presenter.js";
 
 export default class HomePage {
@@ -12,13 +12,6 @@ export default class HomePage {
     this.setIsEnd(false);
 
     return `
-    <header class="main__header">
-      <h1 class="title">Beranda</h1>
-      <nav class="nav__action">
-        <a id="add-story-btn" class="btn__primary">+ Tambah Cerita</a>
-        <a id="logout-btn" class="btn__secondary nav-a">Keluar</a>
-      </nav>
-    </header>
     <div id="loading__container"></div>
     <div class="stories"></div>
   `;
@@ -32,14 +25,14 @@ export default class HomePage {
 
     await this.#presenter.showAllStories();
 
-    document.getElementById('logout-btn').addEventListener('click', (e) => {
-      localStorage.removeItem('credentials');
-      window.location.href = '/';
-    });
+    // document.getElementById('logout-btn').addEventListener('click', (e) => {
+    //   localStorage.removeItem('credentials');
+    //   window.location.href = '/';
+    // });
 
-    document.getElementById('add-story-btn').addEventListener('click', () => {
-      window.location.href = '#/add';
-    });
+    // document.getElementById('add-story-btn').addEventListener('click', () => {
+    //   window.location.href = '#/add';
+    // });
 
     window.addEventListener("scroll", async () => {
       const nearBottom =
@@ -50,7 +43,7 @@ export default class HomePage {
       }
       
       if (nearBottom && !this.#isLoading) {
-        if (getActiveRoute() !== "/home") return;
+        if (getActiveRoute() !== "/") return;
         this.#isLoading = true;
         await this.#presenter.showAllStories();
         this.#isLoading = false;

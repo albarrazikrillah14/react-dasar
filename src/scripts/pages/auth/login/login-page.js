@@ -65,7 +65,7 @@ export default class LoginPage {
   }
 
   async handleLoginSuccess() {
-    window.location.href = '#/home';
+    window.location.href = '#/';
   }
 
   async showLoading() {

@@ -1,4 +1,5 @@
-import { BASE_URL } from "../../config/config.js";
+import { BASE_URL } from "../../config.js";
+import { getAccessToken } from "../../utils/auth.js";
 
 const Remote = {
   async register(name, email, password) {
@@ -60,8 +61,7 @@ const Remote = {
     }
   },
   async postStory({ description, photo, lat, lon }) {
-    const credentials = localStorage.getItem("credentials");
-    const token = JSON.parse(credentials)?.token || '';
+    const token = getAccessToken()
 
 
     try {
@@ -103,8 +103,7 @@ const Remote = {
     }
   },
   async getAllStories({page = 0, size = 10, location = 1}) {
-    const credentials = localStorage.getItem("credentials");
-    const token = JSON.parse(credentials)?.token || '';
+    const token = getAccessToken()
 
     try {
       const headers = {};
@@ -146,9 +145,7 @@ const Remote = {
     }
   },
   async getDetailStoryById(id) {
-    const credentials = localStorage.getItem("credentials");
-    const token = JSON.parse(credentials)?.token || '';
-
+    const token = getAccessToken();
 
     try {
       const headers = {};

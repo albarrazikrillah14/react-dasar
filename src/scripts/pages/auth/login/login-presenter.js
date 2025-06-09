@@ -1,3 +1,5 @@
+import { putAccessToken } from "../../../utils/auth";
+
 export default class LoginPresenter {
   #model;
   #view;
@@ -13,7 +15,7 @@ export default class LoginPresenter {
       const result = await this.#model.login(email, password);
 
       if (result) {
-        localStorage.setItem("credentials", JSON.stringify(result));
+        putAccessToken(result.token);
         await this.#view.handleLoginSuccess();
       }
 

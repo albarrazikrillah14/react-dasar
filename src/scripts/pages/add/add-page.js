@@ -15,18 +15,14 @@ export default class AddPage {
     this.#isSubmitting = false; 
 
     return `
-      <section class="header">
-        <h1 class="title">Tambah Ceritamu</h1>
-        <p>Pastikan data yang anda masukkan valid</p>
-      </section>
       <form class="form__add">
         <div class="form__group">
           <label for="image" class="form__group__label">Gambar</label>
-          <div class="camera__container" style="margin-top: 1rem;">
+          <div class="camera__container" style="margin-top: 1rem; display: flex; flex-direction: column; align-items: center;">
             <img id="imagePreview" src="" alt="Preview Gambar" style="max-width: 100%; margin-top: 1rem; display: none;">
             <video id="cameraView" autoplay playsinline style="max-width: 100%; display: none;"></video>
             <canvas id="photoCanvas" style="max-width: 100%; display: none;"></canvas>
-            <div class="camera__controls">
+            <div class="camera__controls" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
               <button type="button" id="start-camera" class="btn__secondary">Buka Kamera</button>
               <button type="button" id="capture-photo" class="btn__secondary" style="display: none;">Ambil Foto</button>
               <button type="button" id="stop-camera" class="btn__secondary" style="display: none;">Tutup Kamera</button>
