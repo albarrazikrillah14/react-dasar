@@ -22,11 +22,17 @@ export default class FavoritePage {
   }
 
   async showAllStories(stories) {
-    console.log(stories);
+    if (!stories || stories.length === 0) {
+      document.querySelector('.stories').innerHTML =
+        '<p class="error__message">Tidak ada Cerita Favorite</p>';
+      return;
+    }
+
     const html = stories.reduce((prev, current) => {
       return prev + generateTemplateStory(current);
 
     }, '');
+
     document.querySelector('.stories').innerHTML = `<ul class="story-list">${html}</ul>`;
 
   }

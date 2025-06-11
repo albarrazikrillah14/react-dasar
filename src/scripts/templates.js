@@ -19,6 +19,23 @@ export default function generateTemplateStory({
   `;
 }
 
+export function generateNotFoundTemplate() {
+  return `
+    <section class="container" style="padding-block: 80px; text-align: center;">
+        <h1 class="title" style="font-size: 3.5rem;">404</h1>
+        <p class="subtitle" style="margin-top: 0;">Halaman tidak ditemukan</p>
+
+        <p style="max-width: 480px; margin: 0.5rem auto 2rem; line-height: 1.6;">
+          Maaf, halaman yang kamu cari tidak tersedia atau mungkin sudah dipindahkan.
+        </p>
+
+        <a href="/" class="btn">
+          ⬅️ Kembali ke Beranda
+        </a>
+      </section>
+  `;
+}
+
 export function generateMainNavigationListTemplate() {
   return `
     <li><a href="#/" id="list-story">Daftar Cerita</a></li>

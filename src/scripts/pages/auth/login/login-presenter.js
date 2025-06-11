@@ -12,13 +12,8 @@ export default class LoginPresenter {
   async login({ email, password }) {
     try {
       await this.#view.showLoading();
-      const result = await this.#model.login(email, password);
-
-      if (result) {
-        putAccessToken(result.token);
-        await this.#view.handleLoginSuccess();
-      }
-
+      await this.#model.login(email, password);
+      await this.#view.handleLoginSuccess();
     } catch (error) {
       await this.#view.handleError(error.message);
     } finally {

@@ -5,6 +5,7 @@ import {
   generateUnauthenticatedNavigationListTemplate,
   generateSubscribeButtonTemplate,
   generateUnsubscribeButtonTemplate,
+  generateNotFoundTemplate,
 } from '../templates';
 import {
   isServiceWorkerAvailable,
@@ -112,6 +113,11 @@ export default class App {
   async renderPage() {
     const url = getActiveRoute();
     const route = routes[url];
+
+    if (!route) {
+      this.#content.innerHTML = generateNotFoundTemplate();
+      return;
+    }
 
     // Get page instance
     const page = route();

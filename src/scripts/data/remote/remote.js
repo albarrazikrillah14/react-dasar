@@ -1,5 +1,5 @@
 import { BASE_URL } from "../../config.js";
-import { getAccessToken, removeAccessToken } from "../../utils/auth.js";
+import { getAccessToken, putAccessToken, removeAccessToken } from "../../utils/auth.js";
 
 const Remote = {
   async register(name, email, password) {
@@ -51,6 +51,7 @@ const Remote = {
 
       if (result.status >= 200 && result.status < 300) {
         const { loginResult } = response;
+        putAccessToken(loginResult.token);
         return loginResult;
       }
 
